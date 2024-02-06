@@ -8,5 +8,5 @@ export default {
   dbCredentials: {
     uri: env.DATABASE_URL,
   },
-  tablesFilter: ["time-me-daddy_*"],
+  // tablesFilter: ["time-me-daddy_*"],
 } satisfies Config;
