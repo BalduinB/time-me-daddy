@@ -39,7 +39,7 @@ export type ButtonProps = InteractiveButtonProps | SlotalbleButtonProps;
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     (generalProps = { asChild: false, isLoading: false }, ref) => {
         if (generalProps.asChild) {
-            const { className, variant, size, children, ...props } = generalProps;
+            const { className, variant, size, children, asChild, ...props } = generalProps;
             return (
                 <Slot className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props}>
                     {children}

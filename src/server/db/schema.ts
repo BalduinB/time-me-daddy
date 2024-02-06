@@ -29,20 +29,19 @@ export const stopWatch = createTable(
     }),
 );
 
-export const category = createTable(
-    "category",
+export const subject = createTable(
+    "subject",
     {
         id: uuid("id"),
         userId: varchar("user_id", { length: 256 }).notNull(),
         orgId: varchar("org_id", { length: 256 }).notNull(), // comes from clerk
+        name: varchar("name", { length: 256 }).notNull(),
         description: text("description"),
-        createdAt: timestamp("created_at")
-            .default(sql`CURRENT_TIMESTAMP`)
-            .notNull(),
-        updatedAt: timestamp("updatedAt").onUpdateNow().notNull(),
+        createdAt: timestamp("created_at").defaultNow(),
+        updatedAt: timestamp("updatedAt").onUpdateNow().notNull().defaultNow(),
     },
-    (example) => ({
-        nameIndex: index("user_id_idx").on(example.userId),
+    (table) => ({
+        nameIndex: index("user_id_idx").on(table.userId),
     }),
 );
 export const user = createTable(
@@ -59,18 +58,18 @@ export const user = createTable(
     }),
 );
 
-export const categoryRelations = relations(category, ({ many, one }) => ({
+export const categoryRelations = relations(subject, ({ many, one }) => ({
     stopWatches: many(stopWatch),
     creator: one(user, {
-        fields: [category.userId],
+        fields: [subject.userId],
         references: [user.id],
     }),
 }));
 
 export const stopWatchRelations = relations(stopWatch, ({ one }) => ({
-    category: one(category, {
+    category: one(subject, {
         fields: [stopWatch.categoryId],
-        references: [category.id],
+        references: [subject.id],
     }),
     user: one(user, {
         fields: [stopWatch.userId],
@@ -79,6 +78,6 @@ export const stopWatchRelations = relations(stopWatch, ({ one }) => ({
 }));
 
 export const userRelations = relations(user, ({ many }) => ({
-    categories: many(category),
+    categories: many(subject),
     stopWatches: many(stopWatch),
 }));

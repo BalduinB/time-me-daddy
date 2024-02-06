@@ -1,28 +1,31 @@
 import { createTRPCRouter, protectedProcedure } from "@/server/api/trpc";
-import { CreateStopWatch, DeleteStopWatch, EndStopWatch } from "@/schemas/stop-watch";
-import { stopWatch } from "@/server/db/schema";
+
 import { and, eq } from "drizzle-orm";
+import { TRPCError, inferRouterOutputs } from "@trpc/server";
+import { CreateSubject, DeleteSubject } from "@/schemas/subject";
+import { subject } from "@/server/db/schema";
+import { raiseNoOrgSelectedError } from "@/server/errors/no-org";
 
 export const categoryRouter = createTRPCRouter({
     overview: protectedProcedure.query(async ({ ctx: { db, auth } }) => {
-        return await db.query.stopWatch.findMany({
-            where: ({ userId }, { eq }) => eq(userId, auth.userId),
+        const { orgId: currentOrgId } = auth;
+        if (!currentOrgId) raiseNoOrgSelectedError();
+
+        return await db.query.subject.findMany({
+            where: ({ orgId }, { eq }) => eq(orgId, currentOrgId),
         });
     }),
-    create: protectedProcedure.input(CreateStopWatch).mutation(async ({ ctx, input }) => {
-        const { userId } = ctx.auth;
-        await ctx.db.insert(stopWatch).values({ userId, categoryId: input.categoryId });
-    }),
-    delete: protectedProcedure.input(DeleteStopWatch).mutation(async ({ ctx, input }) => {
-        const { userId } = ctx.auth;
-        await ctx.db.delete(stopWatch).where(and(eq(stopWatch.id, input.id), eq(stopWatch.userId, userId)));
-    }),
+    create: protectedProcedure.input(CreateSubject).mutation(async ({ ctx, input }) => {
+        const { userId, orgId } = ctx.auth;
+        if (!orgId) raiseNoOrgSelectedError();
 
-    end: protectedProcedure.input(EndStopWatch).mutation(async ({ ctx, input }) => {
+        await ctx.db.insert(subject).values({ ...input, userId, orgId });
+    }),
+    delete: protectedProcedure.input(DeleteSubject).mutation(async ({ ctx, input }) => {
         const { userId } = ctx.auth;
-        await ctx.db
-            .update(stopWatch)
-            .set({ endDate: input.endDate })
-            .where(and(eq(stopWatch.id, input.id), eq(stopWatch.userId, userId)));
+        await ctx.db.delete(subject).where(and(eq(subject.id, input.id), eq(subject.userId, userId)));
     }),
 });
+export type CategoryRouter = typeof categoryRouter;
+
+export type CategoryRouterOutputs = inferRouterOutputs<CategoryRouter>;

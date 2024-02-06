@@ -1,32 +1,28 @@
+import { cn } from "@/lib/utils";
 import type { ReactNode } from "react";
 
-export function H1({ children }: { children: ReactNode }) {
+type Props = {
+    children: ReactNode;
+    className?: string;
+};
+export function H1({ className, ...props }: Props) {
     return (
-        <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
-            {children}
-        </h1>
+        <h1 className={cn("scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl", className)} {...props} />
     );
 }
-export function H2({ children }: { children: ReactNode }) {
+export function H2({ className, ...props }: Props) {
     return (
-        <h2 className="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0 lg:text-4xl">
-            {children}
-        </h2>
-    );
-}
-
-export function H3({ children }: { children: ReactNode }) {
-    return (
-        <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
-            {children}
-        </h3>
+        <h2
+            className={cn("scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0 lg:text-4xl", className)}
+            {...props}
+        />
     );
 }
 
-export function H4({ children }: { children: ReactNode }) {
-    return (
-        <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
-            {children}
-        </h4>
-    );
+export function H3({ className, ...props }: Props) {
+    return <h3 className={cn("scroll-m-20 text-2xl font-semibold tracking-tight", className)} {...props} />;
+}
+
+export function H4({ className, ...props }: Props) {
+    return <h4 className={cn("scroll-m-20 text-xl font-semibold tracking-tight", className)} {...props} />;
 }

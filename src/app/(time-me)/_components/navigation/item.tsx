@@ -10,6 +10,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { CreditCard, Layout, Settings } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import Link from "next/link";
 
 export type Organization = {
     id: string;
@@ -38,17 +39,17 @@ export const NavItem = <TOrg extends Organization>({
         {
             label: "Themen",
             icon: <Layout className="mr-2 h-4 w-4" />,
-            href: `/company/${organization.id}`,
+            href: `/groups/${organization.id}`,
         },
         {
             label: "Settings",
             icon: <Settings className="mr-2 h-4 w-4" />,
-            href: `/company/${organization.id}/settings`,
+            href: `/groups/${organization.id}/settings`,
         },
         {
             label: "Billing",
             icon: <CreditCard className="mr-2 h-4 w-4" />,
-            href: `/company/${organization.id}/billing`,
+            href: `/groups/${organization.id}/billing`,
         },
     ];
 
@@ -61,16 +62,12 @@ export const NavItem = <TOrg extends Organization>({
         return null;
     }
 
-    const onClick = (href: string) => {
-        router.push(href);
-    };
-
     return (
         <AccordionItem value={organization.id} className="border-none">
             <AccordionTrigger
                 onClick={() => onExpand(organization.id)}
                 className={cn(
-                    "gap-x-2 rounded-lg p-1.5 text-start no-underline hover:bg-accent/50 hover:text-accent-foreground hover:no-underline",
+                    "rounded-lg p-1.5 hover:no-underline",
                     isActive && !isExpanded && "bg-accent text-accent-foreground",
                 )}
             >
@@ -83,23 +80,25 @@ export const NavItem = <TOrg extends Organization>({
                             className="rounded-sm object-cover"
                         />
                     </div>
-                    <span className="text-sm font-medium">{organization.name}</span>
+                    <span>{organization.name}</span>
                 </div>
             </AccordionTrigger>
             <AccordionContent className="pt-1 text-neutral-700">
                 {routes.map((route) => (
                     <Button
+                        asChild
                         key={route.href}
                         size="sm"
-                        onClick={() => onClick(route.href)}
                         className={cn(
                             "mb-1 w-full justify-start pl-10 font-normal",
                             pathname === route.href && "bg-accent text-accent-foreground",
                         )}
                         variant="ghost"
                     >
-                        {route.icon}
-                        {route.label}
+                        <Link href={route.href}>
+                            {route.icon}
+                            {route.label}
+                        </Link>
                     </Button>
                 ))}
             </AccordionContent>
