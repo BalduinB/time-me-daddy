@@ -45,9 +45,7 @@ export default async function Home() {
                         </Link>
                     </div>
                     <div className="flex flex-col items-center gap-2">
-                        <p className="text-2xl text-white">
-                            {hello ? hello.greeting : "Loading tRPC query..."}
-                        </p>
+                        <p className="text-2xl text-white">{hello.greeting}</p>
                     </div>
 
                     <LatestPost />
