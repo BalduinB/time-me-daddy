@@ -1,11 +1,11 @@
-import { AppBreadcrumbs } from "../_components/navigation";
+import { AppBreadcrumbs } from "../../../components/navigation";
 
 type HomeProps = { children: React.ReactNode };
 export default function HomeLayout(props: HomeProps) {
-  return (
-    <>
-      <AppBreadcrumbs items={[]} />
-      {props.children}
-    </>
-  );
+    return (
+        <>
+            <AppBreadcrumbs items={[]} />
+            {props.children}
+        </>
+    );
 }
