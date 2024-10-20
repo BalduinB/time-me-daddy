@@ -1,116 +1,98 @@
-("");
-import { BookOpen, Bot, Settings2, SquareTerminal } from "lucide-react";
+"use client";
 
 import {
     SidebarGroup,
     SidebarGroupLabel,
     SidebarMenu,
+    SidebarMenuButton,
     SidebarMenuItem,
+    SidebarMenuSub,
+    SidebarMenuSubButton,
+    SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
-import type { Project } from "@/server/db/schema";
-import { CreateTopicDialog } from "@/features/project/create";
+import { CreateProjectDialog } from "@/features/project/components/create";
+import { Project } from "@/server/db/schema";
+import { api } from "@/trpc/react";
+import Link from "next/link";
+import {
+    Collapsible,
+    CollapsibleContent,
+    CollapsibleTrigger,
+} from "./ui/collapsible";
+import { ChevronRight, Icon } from "lucide-react";
+import { Icons } from "./ui/icons";
+import { useParams, usePathname } from "next/navigation";
+import { useState } from "react";
 
-const items = [
-    {
-        title: "Playground",
-        url: "#",
-        icon: SquareTerminal,
-        isActive: true,
-        items: [
-            {
-                title: "History",
-                url: "#",
-            },
-            {
-                title: "Starred",
-                url: "#",
-            },
-            {
-                title: "Settings",
-                url: "#",
-            },
-        ],
-    },
-    {
-        title: "Models",
-        url: "#",
-        icon: Bot,
-        items: [
-            {
-                title: "Genesis",
-                url: "#",
-            },
-            {
-                title: "Explorer",
-                url: "#",
-            },
-            {
-                title: "Quantum",
-                url: "#",
-            },
-        ],
-    },
-    {
-        title: "Documentation",
-        url: "#",
-        icon: BookOpen,
-        items: [
-            {
-                title: "Introduction",
-                url: "#",
-            },
-            {
-                title: "Get Started",
-                url: "#",
-            },
-            {
-                title: "Tutorials",
-                url: "#",
-            },
-            {
-                title: "Changelog",
-                url: "#",
-            },
-        ],
-    },
-    {
-        title: "Settings",
-        url: "#",
-        icon: Settings2,
-        items: [
-            {
-                title: "General",
-                url: "#",
-            },
-            {
-                title: "Team",
-                url: "#",
-            },
-            {
-                title: "Billing",
-                url: "#",
-            },
-            {
-                title: "Limits",
-                url: "#",
-            },
-        ],
-    },
-];
-export function NavMain({ projects }: { projects: Array<Project> }) {
+export function NavMain() {
+    const [projects] = api.projects.getList.useSuspenseQuery();
     return (
         <SidebarGroup>
-            <SidebarGroupLabel>Topics</SidebarGroupLabel>
+            <SidebarGroupLabel>Projekte</SidebarGroupLabel>
             <SidebarMenu>
-                <div className="hidden last:block">
-                    <CreateTopicDialog />
-                </div>
+                <CreateProjectDialog />
                 {projects.map((project) => (
-                    <SidebarMenuItem key={project.id}>
-                        {project.name}
-                    </SidebarMenuItem>
+                    <ProjectButton {...project} key={project.id} />
                 ))}
             </SidebarMenu>
         </SidebarGroup>
     );
+}
+
+const projectNav = [
+    { name: "Übersicht", url: "" },
+    { name: "Aufgaben", url: "/tasks" },
+    { name: "Fortschritt", url: "/progress" },
+];
+function ProjectButton(project: Project) {
+    const [isOpen, setIsOpen] = useState(false);
+    const { project: pId } = useParams();
+    const currentPathname = usePathname();
+    const isCurrent = pId === project.id;
+    return (
+        <Collapsible
+            open={isOpen || isCurrent}
+            onOpenChange={setIsOpen}
+            asChild
+            className="group/collapsible"
+        >
+            <SidebarMenuItem>
+                <CollapsibleTrigger asChild>
+                    <SidebarMenuButton tooltip={project.name}>
+                        <Icons.radix />
+                        <Link className="grow" href={`/p/${project.id}`}>
+                            {project.name}
+                        </Link>
+                        <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+                    </SidebarMenuButton>
+                </CollapsibleTrigger>
+                <CollapsibleContent>
+                    <SidebarMenuSub>
+                        {projectNav.map((subItem) => {
+                            const pathname = `/p/${project.id}${subItem.url}`;
+                            return (
+                                <SidebarMenuSubItem key={subItem.name}>
+                                    <SidebarMenuSubButton
+                                        asChild
+                                        isActive={isCurrentSubItem(
+                                            pathname,
+                                            currentPathname,
+                                        )}
+                                    >
+                                        <Link href={pathname}>
+                                            {subItem.name}
+                                        </Link>
+                                    </SidebarMenuSubButton>
+                                </SidebarMenuSubItem>
+                            );
+                        })}
+                    </SidebarMenuSub>
+                </CollapsibleContent>
+            </SidebarMenuItem>
+        </Collapsible>
+    );
+}
+
+function isCurrentSubItem(url: string, current: string) {
+    return url === current;
 }

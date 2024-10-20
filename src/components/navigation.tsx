@@ -18,28 +18,34 @@ import {
     BreadcrumbList,
     BreadcrumbItem,
     BreadcrumbLink,
+    BreadcrumbEllipsis,
+    BreadcrumbSeparator,
+    BreadcrumbPage,
 } from "@/components/ui/breadcrumb";
 import Link from "next/link";
-import { api } from "@/trpc/server";
+import { api, HydrateClient } from "@/trpc/server";
+import { cn } from "@/lib/utils";
 
 export async function AppSidebar({
     ...props
 }: React.ComponentProps<typeof Sidebar>) {
-    const projects = await api.projects.getList();
+    void api.projects.getList.prefetch();
     return (
-        <Sidebar collapsible="icon" {...props}>
-            <SidebarHeader>
-                <TeamSwitcher />
-            </SidebarHeader>
-            <SidebarContent>
-                <NavMain projects={projects} />
-                <NavProjects />
-            </SidebarContent>
-            <SidebarFooter>
-                <NavUser />
-            </SidebarFooter>
-            <SidebarRail />
-        </Sidebar>
+        <HydrateClient>
+            <Sidebar collapsible="icon" {...props}>
+                <SidebarHeader>
+                    <TeamSwitcher />
+                </SidebarHeader>
+                <SidebarContent>
+                    <NavMain />
+                    <NavProjects />
+                </SidebarContent>
+                <SidebarFooter>
+                    <NavUser />
+                </SidebarFooter>
+                <SidebarRail />
+            </Sidebar>
+        </HydrateClient>
     );
 }
 
@@ -52,22 +58,42 @@ type AppBreadcrumbProps = {
 };
 export function AppBreadcrumbs({ items }: AppBreadcrumbProps) {
     return (
-        <header className="flex h-12 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+        <header className="flex h-12 shrink-0 items-center gap-2 border-b transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
             <div className="flex items-center gap-2 px-4">
                 <SidebarTrigger className="-ml-1" />
                 <Separator orientation="vertical" className="mr-2 h-4" />
                 <Breadcrumb>
                     <BreadcrumbList>
-                        {items.map((item, index) => (
-                            <BreadcrumbItem key={index}>
-                                <BreadcrumbLink asChild href={item.href}>
-                                    <Link href={item.href}>{item.title}</Link>
-                                </BreadcrumbLink>
-                            </BreadcrumbItem>
-                        ))}
+                        {items.map((item, index) => {
+                            const isCurrent = index === items.length - 1;
+                            const Comp = isCurrent
+                                ? BreadcrumbPage
+                                : BreadcrumbLink;
+                            return (
+                                <>
+                                    <BreadcrumbItem key={index}>
+                                        <Comp asChild href={item.href}>
+                                            <Link href={item.href}>
+                                                {item.title}
+                                            </Link>
+                                        </Comp>
+                                    </BreadcrumbItem>
+                                    {!isCurrent && <BreadcrumbSeparator />}
+                                </>
+                            );
+                        })}
                     </BreadcrumbList>
                 </Breadcrumb>
             </div>
         </header>
     );
+}
+export function AppShell({
+    className,
+    ...props
+}: {
+    children: React.ReactNode;
+    className?: string;
+}) {
+    return <div className={cn("flex-1 p-4", className)} {...props} />;
 }
