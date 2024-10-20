@@ -1,18 +1,32 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "f7a8322f-2734-4819-84f2-da57e6e7b710",
+  "id": "31811045-8767-43a7-b2ab-f6c6f6b24be9",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
-    "time-me-daddy_post": {
-      "name": "time-me-daddy_post",
+    "time-me-daddy_projects": {
+      "name": "time-me-daddy_projects",
       "columns": {
         "id": {
           "name": "id",
-          "type": "integer",
+          "type": "text(256)",
           "primaryKey": true,
           "notNull": true,
-          "autoincrement": true
+          "autoincrement": false
+        },
+        "owner_id": {
+          "name": "owner_id",
+          "type": "text(256)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "org_id": {
+          "name": "org_id",
+          "type": "text(256)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         },
         "name": {
           "name": "name",
@@ -37,16 +51,81 @@
           "autoincrement": false
         }
       },
-      "indexes": {
-        "name_idx": {
-          "name": "name_idx",
-          "columns": [
-            "name"
-          ],
-          "isUnique": false
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "time-me-daddy_tasks": {
+      "name": "time-me-daddy_tasks",
+      "columns": {
+        "owner_id": {
+          "name": "owner_id",
+          "type": "text(256)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "id": {
+          "name": "id",
+          "type": "text(256)",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "project_id": {
+          "name": "project_id",
+          "type": "text(256)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text(256)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text(256)",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
         }
       },
-      "foreignKeys": {},
+      "indexes": {},
+      "foreignKeys": {
+        "time-me-daddy_tasks_project_id_time-me-daddy_projects_id_fk": {
+          "name": "time-me-daddy_tasks_project_id_time-me-daddy_projects_id_fk",
+          "tableFrom": "time-me-daddy_tasks",
+          "tableTo": "time-me-daddy_projects",
+          "columnsFrom": [
+            "project_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     }
