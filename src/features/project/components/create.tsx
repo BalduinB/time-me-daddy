@@ -1,7 +1,8 @@
 "use client";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
     Dialog,
+    DialogClose,
     DialogContent,
     DialogFooter,
     DialogHeader,
@@ -18,13 +19,18 @@ import { CreateProjectSchema } from "../schema";
 import { Input } from "@/components/ui/input";
 import { api } from "@/trpc/react";
 import { useRouter } from "next/navigation";
+import { SidebarMenuButton } from "@/components/ui/sidebar";
+import { cn } from "@/lib/utils";
+import { useRef } from "react";
 
 export function CreateProjectDialog() {
+    const closeButtonRef = useRef<HTMLButtonElement>(null);
     const utils = api.useUtils();
     const router = useRouter();
     const { isPending, mutate } = api.projects.create.useMutation({
         onSuccess: async (proj) => {
             router.push(`/p/${proj.id}`);
+            closeButtonRef.current?.click();
             await utils.projects.getList.invalidate();
         },
     });
@@ -34,10 +40,10 @@ export function CreateProjectDialog() {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button size={"sm"} className="w-full">
+                <SidebarMenuButton isActive>
                     <PlusCircle />
                     Neues Projekt
-                </Button>
+                </SidebarMenuButton>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
@@ -66,6 +72,9 @@ export function CreateProjectDialog() {
                             )}
                         />
                         <DialogFooter>
+                            <DialogClose asChild ref={closeButtonRef}>
+                                <Button variant={"ghost"}>Abbrechen</Button>
+                            </DialogClose>
                             <Button isLoading={isPending}>Erstellen</Button>
                         </DialogFooter>
                     </form>

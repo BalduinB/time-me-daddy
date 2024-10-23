@@ -19,7 +19,7 @@ import {
     CollapsibleContent,
     CollapsibleTrigger,
 } from "./ui/collapsible";
-import { ChevronRight, Icon } from "lucide-react";
+import { Archive, ChevronRight, Icon } from "lucide-react";
 import { Icons } from "./ui/icons";
 import { useParams, usePathname } from "next/navigation";
 import { useState } from "react";
@@ -34,6 +34,20 @@ export function NavMain() {
                 {projects.map((project) => (
                     <ProjectButton {...project} key={project.id} />
                 ))}
+            </SidebarMenu>
+        </SidebarGroup>
+    );
+}
+export function ArchivedProjects() {
+    return (
+        <SidebarGroup>
+            <SidebarMenu>
+                <SidebarMenuButton asChild tooltip={"Alle Projekte"}>
+                    <Link href={`/p/all`}>
+                        <Archive className="inline" />
+                        Archivierte Projekte
+                    </Link>
+                </SidebarMenuButton>
             </SidebarMenu>
         </SidebarGroup>
     );
@@ -74,10 +88,7 @@ function ProjectButton(project: Project) {
                                 <SidebarMenuSubItem key={subItem.name}>
                                     <SidebarMenuSubButton
                                         asChild
-                                        isActive={isCurrentSubItem(
-                                            pathname,
-                                            currentPathname,
-                                        )}
+                                        isActive={pathname === currentPathname}
                                     >
                                         <Link href={pathname}>
                                             {subItem.name}
@@ -91,8 +102,4 @@ function ProjectButton(project: Project) {
             </SidebarMenuItem>
         </Collapsible>
     );
-}
-
-function isCurrentSubItem(url: string, current: string) {
-    return url === current;
 }

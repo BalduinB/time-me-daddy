@@ -6,6 +6,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 import { TRPCReactProvider } from "@/trpc/react";
 import { ThemeProvider } from "@/components/providers/theme";
+import { Toaster } from "@/components/ui/sonner";
 
 export const metadata: Metadata = {
     title: "Create T3 App",
@@ -29,6 +30,7 @@ export default function RootLayout({
                         <TRPCReactProvider>
                             {children}
                             <ReactQueryDevtools initialIsOpen={false} />
+                            <Toaster />
                         </TRPCReactProvider>
                     </ClerkProvider>
                 </ThemeProvider>

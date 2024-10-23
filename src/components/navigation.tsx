@@ -1,9 +1,19 @@
+import Link from "next/link";
 import * as React from "react";
 
-import { NavMain } from "@/components/nav-main";
-import { NavProjects } from "@/components/nav-projects";
+import { ArchivedProjects, NavMain } from "@/components/nav-main";
+import { NavOrganisation } from "@/components/nav-org";
 import { NavUser } from "@/components/nav-user";
 import { TeamSwitcher } from "@/components/team-switcher";
+import {
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { Separator } from "@/components/ui/separator";
 import {
     Sidebar,
     SidebarContent,
@@ -12,19 +22,8 @@ import {
     SidebarRail,
     SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { Separator } from "@/components/ui/separator";
-import {
-    Breadcrumb,
-    BreadcrumbList,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbEllipsis,
-    BreadcrumbSeparator,
-    BreadcrumbPage,
-} from "@/components/ui/breadcrumb";
-import Link from "next/link";
-import { api, HydrateClient } from "@/trpc/server";
 import { cn } from "@/lib/utils";
+import { HydrateClient, api } from "@/trpc/server";
 
 export async function AppSidebar({
     ...props
@@ -38,7 +37,8 @@ export async function AppSidebar({
                 </SidebarHeader>
                 <SidebarContent>
                     <NavMain />
-                    <NavProjects />
+                    <ArchivedProjects />
+                    <NavOrganisation />
                 </SidebarContent>
                 <SidebarFooter>
                     <NavUser />
