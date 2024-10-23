@@ -1,12 +1,13 @@
-import "@/styles/globals.css";
-import { ClerkProvider } from "@clerk/nextjs";
-import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
-import { TRPCReactProvider } from "@/trpc/react";
+import { ClerkProvider } from "@clerk/nextjs";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { GeistSans } from "geist/font/sans";
+
 import { ThemeProvider } from "@/components/providers/theme";
 import { Toaster } from "@/components/ui/sonner";
+import "@/styles/globals.css";
+import { TRPCReactProvider } from "@/trpc/react";
 
 export const metadata: Metadata = {
     title: "Create T3 App",
