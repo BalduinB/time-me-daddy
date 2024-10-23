@@ -1,8 +1,13 @@
-// Example model schema from the Drizzle docs
-// https://orm.drizzle.team/docs/sql-schema-declaration
-
-import { type InferSelectModel, sql } from "drizzle-orm";
-import { index, int, sqliteTableCreator, text } from "drizzle-orm/sqlite-core";
+import type { JSONContent } from "@tiptap/react";
+import { type InferSelectModel, relations, sql } from "drizzle-orm";
+import {
+    blob,
+    index,
+    int,
+    integer,
+    sqliteTableCreator,
+    text,
+} from "drizzle-orm/sqlite-core";
 
 /**
  * This is an example of how to use the multi-project schema feature of Drizzle ORM. Use the same
@@ -44,6 +49,8 @@ export const projects = createTable("projects", {
     ownerId: text("owner_id", { length: 256 }).notNull(),
     orgId: text("org_id", { length: 256 }).notNull(),
     name: text("name", { length: 256 }).notNull(),
+    isPinned: integer("is_pinned", { mode: "boolean" }).default(false),
+    description: blob("description", { mode: "json" }).$type<JSONContent>(),
     ...timestamps,
 });
 export type Project = InferSelectModel<typeof projects>;
@@ -59,3 +66,13 @@ export const tasks = createTable("tasks", {
 });
 
 export type Task = InferSelectModel<typeof tasks>;
+
+export const projectsRelations = relations(projects, ({ many }) => ({
+    tasks: many(tasks),
+}));
+export const tasksRelations = relations(tasks, ({ one }) => ({
+    project: one(projects, {
+        fields: [tasks.projectId],
+        references: [projects.id],
+    }),
+}));

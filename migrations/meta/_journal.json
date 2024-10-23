@@ -29,6 +29,20 @@
       "when": 1729437122915,
       "tag": "0003_talented_patriot",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1729450740398,
+      "tag": "0004_polite_star_brand",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1729695301230,
+      "tag": "0005_wild_mockingbird",
+      "breakpoints": true
     }
   ]
 }

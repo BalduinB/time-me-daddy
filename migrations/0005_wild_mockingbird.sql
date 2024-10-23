@@ -1,0 +1,1 @@
+ALTER TABLE `time-me-daddy_projects` ADD `is_pinned` integer DEFAULT false;
